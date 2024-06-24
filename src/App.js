@@ -21,7 +21,8 @@ const App = () => {
     if (priceFrom !== '' && priceTo !== '') {
       filterByPrice(parseInt(priceFrom), parseInt(priceTo));
     } else {
-      setData(initData);
+      const sortedData = getSortedData(sortType, initData);
+      setData(sortedData);
     }
   }, [priceFrom, priceTo]);// eslint-disable-line react-hooks/exhaustive-deps
 
