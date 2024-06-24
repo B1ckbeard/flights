@@ -67,7 +67,6 @@ const App = () => {
   const filterByPrice = (priceFrom, priceTo) => {
     const filteredData = initData.filter(({ flight: { price: { total: { amount } } } }) => amount >= priceFrom && amount <= priceTo);
     setData(filteredData);
-    console.log(filteredData);
   };
 
   const filterByCompany = (value) => initData.filter(fl => fl.flight.carrier.caption === value);
@@ -84,7 +83,6 @@ const App = () => {
       setChekedCompany(prevItems => [...prevItems, value]);
       const sortedData = getSortedData(sortType, filteredData);
       setData(sortedData);
-      console.log(sortedData);
     }
   };
 

@@ -9,7 +9,6 @@ const PaginationData = ({ data }) => {
     const firstPageIndex = 0;
     const lastPageIndex = (firstPageIndex + currentPage) * pageSize;
     const newData = data.slice(firstPageIndex, lastPageIndex);
-    console.log(newData);
     return newData;
   }, [currentPage, data]);
 
@@ -19,7 +18,6 @@ const PaginationData = ({ data }) => {
 
   const handleClickSeeMore = () => {
     setCurrentPage(currentPage + 1)
-    console.log('currentPage', currentPage);
   };
 
   return (
