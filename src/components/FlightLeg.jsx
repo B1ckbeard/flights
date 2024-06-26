@@ -57,7 +57,7 @@ const FlightLeg = ({ leg }) => {
             </div>
             <div className="col-3 text-center">
               <div className="d-flex align-items-center justify-content-center">
-                <IoMdTime size={20}/>
+                <IoMdTime size={20} className='me-1'/>
                 <span>{Math.floor(leg.duration / 60)} ч {leg.duration % 60} мин</span>
               </div>
             </div>

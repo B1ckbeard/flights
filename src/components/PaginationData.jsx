@@ -24,7 +24,13 @@ const PaginationData = ({ data }) => {
     <div className="container w-75 py-3">
       <DisplayData data={currentTableData} />
       <div className="text-center">
-        <button type="button" className="btn btn-primary w-50" onClick={() => handleClickSeeMore()}>Показать еще</button>
+        <button type="button"
+          className="btn btn-primary w-50"
+          onClick={() => handleClickSeeMore()}
+          disabled = {data.length === currentTableData.length}
+        >
+          Показать еще
+        </button>
       </div>
     </div>
   )
