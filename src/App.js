@@ -10,23 +10,39 @@ const App = () => {
   const [sortType, setSortType] = useState('');
   const [maxStops, setMaxStops] = useState(null);
   const [chekedCompany, setChekedCompany] = useState([]);
+  const [companiesNames, setCompaniesNames] = useState([]);
   const [priceFrom, setPriceFrom] = useState('');
   const [priceTo, setPriceTo] = useState('');
 
   useEffect(() => {
     setData(initData);
+    setCompaniesNames(getUniqueNames(initData));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (priceFrom !== '' && priceTo !== '') {
-      filterByPrice(parseInt(priceFrom), parseInt(priceTo));
+      const filteredData = filterByPrice(parseInt(priceFrom), parseInt(priceTo));
+      const sortedData = getSortedData(sortType, filteredData);
+      setCompaniesNames(getUniqueNames(filteredData));
+      setData(sortedData);
     } else {
       const sortedData = getSortedData(sortType, initData);
+      setCompaniesNames(getUniqueNames(sortedData));
       setData(sortedData);
     }
   }, [priceFrom, priceTo]);// eslint-disable-line react-hooks/exhaustive-deps
 
-  const uniqueNames = Array.from(new Set([...data].map(fl => fl.flight.carrier.caption)));
+  useEffect (() => {
+    if (chekedCompany.length > 0) {
+      const filteredData = chekedCompany.map((company) => {
+        return filterByCompany(initData, company);
+      }).reduce((acc, curr) => acc.concat(curr), []);
+      setData(getSortedData(sortType, filteredData));
+      console.log(filteredData);
+    } else if(chekedCompany.length === 0){
+      setData(getSortedData(sortType, initData));
+    }
+  }, [chekedCompany]);// eslint-disable-line react-hooks/exhaustive-deps
 
   const getSortedData = (type, data) => {
     const newData = [...data];
@@ -55,34 +71,36 @@ const App = () => {
     if (value === maxStops) {
       const sortedData = getSortedData(sortType, initData);
       setData(sortedData);
+      setCompaniesNames(getUniqueNames(initData));
       setMaxStops(null);
     } else {
       const filteredData = filterByStops(value);
       const sortedData = getSortedData(sortType, filteredData);
       setData(sortedData);
+      setCompaniesNames(getUniqueNames(filteredData));
       setMaxStops(value);
     }
   };
 
   const filterByPrice = (priceFrom, priceTo) => {
     const filteredData = initData.filter(({ flight: { price: { total: { amount } } } }) => amount >= priceFrom && amount <= priceTo);
-    setData(filteredData);
+    return filteredData;
   };
 
-  const filterByCompany = (value) => initData.filter(fl => fl.flight.carrier.caption === value);
+  const getUniqueNames = (data) => {
+    const uniqueNames = Array.from(new Set([...data].map(fl => fl.flight.carrier.caption)));
+    return uniqueNames;
+  };
+
+  const filterByCompany = (data, value) => data.filter(fl => fl.flight.carrier.caption === value);
 
   const handleFilterByCompany = (event) => {
     const value = event.target.value;
     if (chekedCompany.includes(value)) {
-      const sortedData = getSortedData(sortType, initData);
-      setData(sortedData);
       const newChekedCompany = chekedCompany.filter((c) => c !== value);
       setChekedCompany(newChekedCompany);
     } else {
-      const filteredData = filterByCompany(value);
       setChekedCompany(prevItems => [...prevItems, value]);
-      const sortedData = getSortedData(sortType, filteredData);
-      setData(sortedData);
     }
   };
 
@@ -160,7 +178,7 @@ const App = () => {
         </Form>
         <Form>
           <Form.Label className='fw-bold'>Авиакомпании</Form.Label>
-          {uniqueNames.map((el, index) => {
+          {companiesNames.map((el, index) => {
             return (
               <Form.Check key={index}
                 type='checkbox'
